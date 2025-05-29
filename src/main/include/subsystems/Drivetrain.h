@@ -6,20 +6,80 @@
 
 #include <frc2/command/SubsystemBase.h>
 #include <ctre/phoenix/motorcontrol/can/TalonSRX.h>
+#include <frc/Encoder.h>
+#include <frc/controller/PIDController.h>
+#include <frc/controller/SimpleMotorFeedforward.h>
+#include <frc/kinematics/DifferentialDriveKinematics.h>
+#include <frc/kinematics/DifferentialDriveOdometry.h>
+#include <frc/motorcontrol/PWMSparkMax.h>
+#include <units/angle.h>
+#include <units/angular_velocity.h>
+#include <units/length.h>
+#include <units/velocity.h>
+#include <frc/AnalogGyro.h>
+#include <numbers>
+#include <units/voltage.h>
+#include <units/math.h>
+
 
 class Drivetrain : public frc2::SubsystemBase {
  public:
-  Drivetrain();
+  Drivetrain() {
 
+    //We need to invert one side of the drive train so that the voltages result in both sides moving forward
+    //(this is dependent on right needing to be flipped, but just switch if otherwise)
+    m_rightLeader.SetInverted(true);
+
+    m_gyro.Reset();
+    //Set the distance per pulse for the drive encoders. We can use the distance traveled for 
+    //one rotation of the wheel divided by the encoder resolution.
+    m_leftEncoder.SetDistancePerPulse(2 * std::numbers::pi *kWheelRadius / kEncoderResolution);
+    m_rightEncoder.SetDistancePerPulse(2 * std::numbers::pi *kWheelRadius / kEncoderResolution);
+
+    m_leftEncoder.Reset();
+    m_rightEncoder.Reset();
+  }
+    static constexpr units::meters_per_second_t kMaxSpeed =
+      1.0_mps;  // 3 meters per second
+    static constexpr units::radians_per_second_t kMaxAngularSpeed{
+      std::numbers::pi};  // 1/2 rotation per second
+
+    void SetSpeeds(const frc::DifferentialDriveWheelSpeeds& speeds);
+      void Drive(units::meters_per_second_t xSpeed, units::radians_per_second_t rot);
+      void UpdateOdometry();
+
+    
   /**
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
 
  private:
+
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
-  ctre::phoenix::motorcontrol::can::TalonSRX rightMotor{0};
+
+  static constexpr units::meter_t kTrackWidth = 0.381_m * 2;
+  static constexpr double kWheelRadius = 0.0508;  // meters
+  static constexpr int kEncoderResolution = 4096;
+  
+  frc::PWMSparkMax m_leftLeader{1};
+  frc::PWMSparkMax m_rightLeader{2};
+
+  frc::Encoder m_leftEncoder{0, 1};
+  frc::Encoder m_rightEncoder{2, 3};
+
+  frc::PIDController m_leftPIDController{1.0, 0.0, 0.0};
+  frc::PIDController m_rightPIDController{1.0, 0.0, 0.0};
+
+  frc::AnalogGyro m_gyro{0};
+
+  frc::DifferentialDriveKinematics m_kinematics{kTrackWidth};
+  frc::DifferentialDriveOdometry m_odometry{
+      m_gyro.GetRotation2d(), units::meter_t{m_leftEncoder.GetDistance()},
+      units::meter_t{m_rightEncoder.GetDistance()}};
+
+  frc::SimpleMotorFeedforward<units::meters> m_feedforward{1_V, 3_V / 1_mps};
 
   
 };

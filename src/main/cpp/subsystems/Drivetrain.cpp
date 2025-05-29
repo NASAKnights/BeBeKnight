@@ -8,3 +8,28 @@ Drivetrain::Drivetrain() = default;
 
 // This method will be called once per scheduler run
 void Drivetrain::Periodic() {}
+
+void Drivetrain::SetSpeeds(const frc::DifferentialDriveWheelSpeeds& speeds) {
+  const auto leftFeedforward = m_feedforward.Calculate(speeds.left);
+  const auto rightFeedforward = m_feedforward.Calculate(speeds.right);
+  const double leftOutput = m_leftPIDController.Calculate(
+      m_leftEncoder.GetRate(), speeds.left.value());
+  const double rightOutput = m_rightPIDController.Calculate(
+      m_rightEncoder.GetRate(), speeds.right.value());
+
+  m_leftLeader.SetVoltage(units::volt_t{leftOutput} + leftFeedforward);
+  m_rightLeader.SetVoltage(units::volt_t{rightOutput} + rightFeedforward);
+
+
+
+void Drivetrain::Drive(units::meters_per_second_t xSpeed,
+                       units::radians_per_second_t rot) {
+  SetSpeeds(m_kinematics.ToWheelSpeeds({xSpeed, 0_mps, rot}));
+  }
+
+void Drivetrain::UpdateOdometry() {
+  m_odometry.Update(m_gyro.GetRotation2d(),
+                    units::meter_t{m_leftEncoder.GetDistance()},
+                    units::meter_t{m_rightEncoder.GetDistance()});
+}
+
