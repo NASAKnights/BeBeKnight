@@ -21,48 +21,47 @@
 #include <units/voltage.h>
 #include <units/math.h>
 
+class Drivetrain : public frc2::SubsystemBase
+{
+public:
+  Drivetrain()
+  {
 
-class Drivetrain : public frc2::SubsystemBase {
- public:
-  Drivetrain() {
-
-    //We need to invert one side of the drive train so that the voltages result in both sides moving forward
+    // We need to invert one side of the drive train so that the voltages result in both sides moving forward
     //(this is dependent on right needing to be flipped, but just switch if otherwise)
     m_rightLeader.SetInverted(true);
 
     m_gyro.Reset();
-    //Set the distance per pulse for the drive encoders. We can use the distance traveled for 
-    //one rotation of the wheel divided by the encoder resolution.
-    m_leftEncoder.SetDistancePerPulse(2 * std::numbers::pi *kWheelRadius / kEncoderResolution);
-    m_rightEncoder.SetDistancePerPulse(2 * std::numbers::pi *kWheelRadius / kEncoderResolution);
+    // Set the distance per pulse for the drive encoders. We can use the distance traveled for
+    // one rotation of the wheel divided by the encoder resolution.
+    m_leftEncoder.SetDistancePerPulse(2 * std::numbers::pi * kWheelRadius / kEncoderResolution);
+    m_rightEncoder.SetDistancePerPulse(2 * std::numbers::pi * kWheelRadius / kEncoderResolution);
 
     m_leftEncoder.Reset();
     m_rightEncoder.Reset();
   }
-    static constexpr units::meters_per_second_t kMaxSpeed =
-      1.0_mps;  // 3 meters per second
-    static constexpr units::radians_per_second_t kMaxAngularSpeed{
-      std::numbers::pi};  // 1/2 rotation per second
+  static constexpr units::meters_per_second_t kMaxSpeed =
+      1.0_mps; // 3 meters per second
+  static constexpr units::radians_per_second_t kMaxAngularSpeed{
+      std::numbers::pi}; // 1/2 rotation per second
 
-    void SetSpeeds(const frc::DifferentialDriveWheelSpeeds& speeds);
-      void Drive(units::meters_per_second_t xSpeed, units::radians_per_second_t rot);
-      void UpdateOdometry();
+  void SetSpeeds(const frc::DifferentialDriveWheelSpeeds &speeds);
+  void Drive(units::meters_per_second_t xSpeed, units::radians_per_second_t rot);
+  void UpdateOdometry();
 
-    
   /**
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
 
- private:
-
+private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 
   static constexpr units::meter_t kTrackWidth = 0.381_m * 2;
-  static constexpr double kWheelRadius = 0.0508;  // meters
+  static constexpr double kWheelRadius = 0.0508; // meters
   static constexpr int kEncoderResolution = 4096;
-  
+
   frc::PWMSparkMax m_leftLeader{1};
   frc::PWMSparkMax m_rightLeader{2};
 
@@ -80,6 +79,4 @@ class Drivetrain : public frc2::SubsystemBase {
       units::meter_t{m_rightEncoder.GetDistance()}};
 
   frc::SimpleMotorFeedforward<units::meters> m_feedforward{1_V, 3_V / 1_mps};
-
-  
 };
