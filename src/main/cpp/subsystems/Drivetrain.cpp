@@ -17,6 +17,12 @@ void Drivetrain::SetSpeeds(const frc::DifferentialDriveWheelSpeeds &speeds)
       m_leftEncoder.GetRate(), speeds.left.value());
   const double rightOutput = m_rightPIDController.Calculate(
       m_rightEncoder.GetRate(), speeds.right.value());
+  if constexpr (frc::RobotBase::IsSimulation())
+  {
+    m_differentialsim.SetInputs(units::volt_t{leftOutput} + leftFeedforward,
+                                units::volt_t{rightOutput} + rightFeedforward);
+    return;
+  }
 
   m_leftLeader.SetVoltage(units::volt_t{leftOutput} + leftFeedforward);
   m_rightLeader.SetVoltage(units::volt_t{rightOutput} + rightFeedforward);

@@ -9,6 +9,7 @@
 #include <frc/Encoder.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/SimpleMotorFeedforward.h>
+#include <frc/simulation/DifferentialDrivetrainSim.h>
 #include <frc/kinematics/DifferentialDriveKinematics.h>
 #include <frc/kinematics/DifferentialDriveOdometry.h>
 #include <frc/motorcontrol/PWMSparkMax.h>
@@ -20,6 +21,8 @@
 #include <numbers>
 #include <units/voltage.h>
 #include <units/math.h>
+#include <Constants.h>
+#include <frc/RobotBase.h>
 
 class Drivetrain : public frc2::SubsystemBase
 {
@@ -34,14 +37,13 @@ public:
     m_gyro.Reset();
     // Set the distance per pulse for the drive encoders. We can use the distance traveled for
     // one rotation of the wheel divided by the encoder resolution.
-    m_leftEncoder.SetDistancePerPulse(2 * std::numbers::pi * kWheelRadius / kEncoderResolution);
-    m_rightEncoder.SetDistancePerPulse(2 * std::numbers::pi * kWheelRadius / kEncoderResolution);
+    m_leftEncoder.SetDistancePerPulse(2 * std::numbers::pi * DrivetrainConstants::WheelRadius.value() / DrivetrainConstants::EncoderResolution);
+    m_rightEncoder.SetDistancePerPulse(2 * std::numbers::pi * DrivetrainConstants::WheelRadius.value() / DrivetrainConstants::EncoderResolution);
 
     m_leftEncoder.Reset();
     m_rightEncoder.Reset();
   }
-  static constexpr units::meters_per_second_t kMaxSpeed =
-      1.0_mps; // 3 meters per second
+  static constexpr units::meters_per_second_t kMaxSpeed = DrivetrainConstants::MaxSpeed; // 1 meter per second
   static constexpr units::radians_per_second_t kMaxAngularSpeed{
       std::numbers::pi}; // 1/2 rotation per second
 
@@ -53,30 +55,38 @@ public:
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
+  void SimulationPeriodic()
+  {
+    m_differentialsim.Update(20_ms);
+  }
 
 private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 
-  static constexpr units::meter_t kTrackWidth = 0.381_m * 2;
-  static constexpr double kWheelRadius = 0.0508; // meters
-  static constexpr int kEncoderResolution = 4096;
+  // frc::DCMotor driveMotor, double gearing, units::moment_of_inertia::kilogram_square_meter_t J,
+  // units::mass::kilogram_t mass, units::length::meter_t wheelRadius,
+  // units::length::meter_t trackWidth, const std::array<double, 7U> &measurementStdDevs = {}
+  frc::DCMotor driveMotor = frc::DCMotor::CIM(1);
 
-  frc::PWMSparkMax m_leftLeader{1};
-  frc::PWMSparkMax m_rightLeader{2};
+  frc::sim::DifferentialDrivetrainSim m_differentialsim{driveMotor, DrivetrainConstants::Gearing,
+                                                        DrivetrainConstants::MOI, DrivetrainConstants::mass, DrivetrainConstants::WheelRadius, DrivetrainConstants::TrackWidth};
 
-  frc::Encoder m_leftEncoder{0, 1};
-  frc::Encoder m_rightEncoder{2, 3};
+  frc::PWMSparkMax m_leftLeader{DrivetrainConstants::LeftLeaderSparkMaxId};
+  frc::PWMSparkMax m_rightLeader{DrivetrainConstants::RightLeaderSparkMaxId};
 
-  frc::PIDController m_leftPIDController{1.0, 0.0, 0.0};
-  frc::PIDController m_rightPIDController{1.0, 0.0, 0.0};
+  frc::Encoder m_leftEncoder{DrivetrainConstants::LeftEncoder1, DrivetrainConstants::LeftEncoder2};
+  frc::Encoder m_rightEncoder{DrivetrainConstants::RightEncoder1, DrivetrainConstants::RightEncoder2};
 
-  frc::AnalogGyro m_gyro{0};
+  frc::PIDController m_leftPIDController{DrivetrainConstants::P, DrivetrainConstants::I, DrivetrainConstants::D};
+  frc::PIDController m_rightPIDController{DrivetrainConstants::P, DrivetrainConstants::I, DrivetrainConstants::D};
 
-  frc::DifferentialDriveKinematics m_kinematics{kTrackWidth};
+  frc::AnalogGyro m_gyro{DrivetrainConstants::gyro};
+
+  frc::DifferentialDriveKinematics m_kinematics{DrivetrainConstants::TrackWidth};
   frc::DifferentialDriveOdometry m_odometry{
       m_gyro.GetRotation2d(), units::meter_t{m_leftEncoder.GetDistance()},
       units::meter_t{m_rightEncoder.GetDistance()}};
 
-  frc::SimpleMotorFeedforward<units::meters> m_feedforward{1_V, 3_V / 1_mps};
+  frc::SimpleMotorFeedforward<units::meters> m_feedforward{DrivetrainConstants::StaticFeedFoward, DrivetrainConstants::VelocityFeedFoward};
 };

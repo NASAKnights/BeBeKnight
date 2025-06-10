@@ -13,9 +13,39 @@
  * command-specific namespaces within this header, which can then be used where
  * they are needed.
  */
+#include <units/velocity.h>
+#include <units/voltage.h>
+#include <numbers>
+#include <units/moment_of_inertia.h>
 
-namespace OperatorConstants {
+namespace OperatorConstants
+{
 
-inline constexpr int kDriverControllerPort = 0;
+    inline constexpr int kDriverControllerPort = 0;
 
-}  // namespace OperatorConstants
+} // namespace OperatorConstants
+
+namespace DrivetrainConstants
+{
+
+    static constexpr auto MaxSpeed = 1.0_mps;
+    static constexpr auto TrackWidth = 0.381_m * 2;
+    static constexpr auto WheelRadius = 0.0508_m; // meters
+    static constexpr int EncoderResolution = 4096;
+    static constexpr int LeftLeaderSparkMaxId = 1;
+    static constexpr int RightLeaderSparkMaxId = 2;
+    static constexpr int LeftEncoder1 = 0;
+    static constexpr int LeftEncoder2 = 1;
+    static constexpr int RightEncoder1 = 2;
+    static constexpr int RightEncoder2 = 3;
+    static constexpr double P = 1.0;
+    static constexpr double I = 0.0;
+    static constexpr double D = 0.0;
+    static constexpr int gyro = 0;
+    static constexpr auto StaticFeedFoward = 1_V;
+    static constexpr auto VelocityFeedFoward = 3_V / 1_mps;
+    static constexpr double Gearing = 12.0;
+    static constexpr units::moment_of_inertia::kilogram_square_meter_t MOI = units::moment_of_inertia::kilogram_square_meter_t(0.1);
+    static constexpr units::mass::kilogram_t mass{60};
+
+}
