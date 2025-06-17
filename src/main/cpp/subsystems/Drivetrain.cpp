@@ -7,7 +7,19 @@
 // Drivetrain::Drivetrain() = default;
 
 // This method will be called once per scheduler run
-void Drivetrain::Periodic() {}
+void Drivetrain::Periodic()
+{
+
+  m_poseEstimator.Update(m_gyro.GetRotation2d(),
+                         units::meter_t{m_leftEncoder.GetDistance()},
+                         units::meter_t{m_rightEncoder.GetDistance()});
+}
+
+void Drivetrain::SimulationPeriodic()
+{
+  m_differentialsim.Update(20_ms);
+  m_differentialsim.GetPose
+}
 
 void Drivetrain::SetSpeeds(const frc::DifferentialDriveWheelSpeeds &speeds)
 {

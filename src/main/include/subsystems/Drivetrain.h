@@ -23,6 +23,10 @@
 #include <units/math.h>
 #include <Constants.h>
 #include <frc/RobotBase.h>
+#include <frc/smartdashboard/Field2d.h>
+
+#include "frc/estimator/DifferentialDrivePoseEstimator.h"
+#include "frc/StateSpaceUtil.h"
 
 class Drivetrain : public frc2::SubsystemBase
 {
@@ -55,10 +59,7 @@ public:
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
-  void SimulationPeriodic()
-  {
-    m_differentialsim.Update(20_ms);
-  }
+  void SimulationPeriodic();
 
 private:
   // Components (e.g. motor controllers and sensors) should generally be
@@ -71,6 +72,8 @@ private:
 
   frc::sim::DifferentialDrivetrainSim m_differentialsim{driveMotor, DrivetrainConstants::Gearing,
                                                         DrivetrainConstants::MOI, DrivetrainConstants::mass, DrivetrainConstants::WheelRadius, DrivetrainConstants::TrackWidth};
+
+  frc::Field2d m_field;
 
   frc::PWMSparkMax m_leftLeader{DrivetrainConstants::LeftLeaderSparkMaxId};
   frc::PWMSparkMax m_rightLeader{DrivetrainConstants::RightLeaderSparkMaxId};
@@ -89,4 +92,13 @@ private:
       units::meter_t{m_rightEncoder.GetDistance()}};
 
   frc::SimpleMotorFeedforward<units::meters> m_feedforward{DrivetrainConstants::StaticFeedFoward, DrivetrainConstants::VelocityFeedFoward};
+
+  frc::DifferentialDrivePoseEstimator m_poseEstimator{
+      m_kinematics,
+      m_gyro.GetRotation2d(),
+      units::meter_t{m_leftEncoder.GetDistance()},
+      units::meter_t{m_rightEncoder.GetDistance()},
+      frc::Pose2d{},
+      {0.01, 0.01, 0.01},
+      {0.1, 0.1, 0.1}};
 };
