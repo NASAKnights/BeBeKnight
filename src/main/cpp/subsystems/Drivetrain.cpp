@@ -13,12 +13,25 @@ void Drivetrain::Periodic()
   m_poseEstimator.Update(m_gyro.GetRotation2d(),
                          units::meter_t{m_leftEncoder.GetDistance()},
                          units::meter_t{m_rightEncoder.GetDistance()});
+
+  m_field.SetRobotPose(m_poseEstimator.GetEstimatedPosition());
 }
 
 void Drivetrain::SimulationPeriodic()
 {
   m_differentialsim.Update(20_ms);
-  m_differentialsim.GetPose
+  m_differentialsim.GetPose();
+
+  m_differentialsim.SetInputs(
+      m_leftLeader.Get() * units::volt_t(frc::RobotController::GetInputVoltage()),
+      m_rightLeader.Get() * units::volt_t(frc::RobotController::GetInputVoltage()));
+
+  m_leftEncoderSim.SetDistance(m_differentialsim.GetLeftPosition().value());
+  m_leftEncoderSim.SetRate(m_differentialsim.GetLeftVelocity().value());
+  m_rightEncoderSim.SetDirection(m_differentialsim.GetRightPosition().value());
+  m_rightEncoderSim.SetRate(m_differentialsim.GetRightVelocity().value());
+  m_gyroSim.SetAngle(double{-m_differentialsim.GetHeading().Degrees()});
+  // m_differentialsim.getPose
 }
 
 void Drivetrain::SetSpeeds(const frc::DifferentialDriveWheelSpeeds &speeds)

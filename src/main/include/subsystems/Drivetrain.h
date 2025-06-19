@@ -24,6 +24,10 @@
 #include <Constants.h>
 #include <frc/RobotBase.h>
 #include <frc/smartdashboard/Field2d.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/simulation/EncoderSim.h>
+#include <frc/simulation/AnalogGyroSim.h>
+#include <frc/RobotController.h>
 
 #include "frc/estimator/DifferentialDrivePoseEstimator.h"
 #include "frc/StateSpaceUtil.h"
@@ -37,6 +41,8 @@ public:
     // We need to invert one side of the drive train so that the voltages result in both sides moving forward
     //(this is dependent on right needing to be flipped, but just switch if otherwise)
     m_rightLeader.SetInverted(true);
+
+    frc::SmartDashboard::PutData("Field", &m_field);
 
     m_gyro.Reset();
     // Set the distance per pulse for the drive encoders. We can use the distance traveled for
@@ -81,10 +87,15 @@ private:
   frc::Encoder m_leftEncoder{DrivetrainConstants::LeftEncoder1, DrivetrainConstants::LeftEncoder2};
   frc::Encoder m_rightEncoder{DrivetrainConstants::RightEncoder1, DrivetrainConstants::RightEncoder2};
 
+  frc::sim::EncoderSim m_leftEncoderSim{m_leftEncoder};
+  frc::sim::EncoderSim m_rightEncoderSim{m_rightEncoder};
+
   frc::PIDController m_leftPIDController{DrivetrainConstants::P, DrivetrainConstants::I, DrivetrainConstants::D};
   frc::PIDController m_rightPIDController{DrivetrainConstants::P, DrivetrainConstants::I, DrivetrainConstants::D};
 
   frc::AnalogGyro m_gyro{DrivetrainConstants::gyro};
+
+  frc::sim::AnalogGyroSim m_gyroSim{m_gyro};
 
   frc::DifferentialDriveKinematics m_kinematics{DrivetrainConstants::TrackWidth};
   frc::DifferentialDriveOdometry m_odometry{

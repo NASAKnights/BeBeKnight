@@ -9,6 +9,10 @@
 
 #include "Constants.h"
 #include "subsystems/ExampleSubsystem.h"
+#include "subsystems/Drivetrain.h"
+#include <frc2/command/RunCommand.h>
+#include <frc/MathUtil.h>
+#include <frc/Joystick.h>
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -17,19 +21,21 @@
  * scheduler calls).  Instead, the structure of the robot (including subsystems,
  * commands, and trigger mappings) should be declared here.
  */
-class RobotContainer {
- public:
+class RobotContainer
+{
+public:
   RobotContainer();
 
   frc2::CommandPtr GetAutonomousCommand();
 
- private:
+private:
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  frc2::CommandXboxController m_driverController{
+  frc::Joystick m_driverController{
       OperatorConstants::kDriverControllerPort};
 
   // The robot's subsystems are defined here...
   ExampleSubsystem m_subsystem;
+  Drivetrain m_driveTrain;
 
   void ConfigureBindings();
 };
