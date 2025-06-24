@@ -13,7 +13,7 @@
 #include <frc2/command/RunCommand.h>
 #include <frc/MathUtil.h>
 #include <frc/Joystick.h>
-
+#include "subsystems/Indexer.h"
 /**
  * This class is where the bulk of the robot should be declared.  Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -36,6 +36,7 @@ private:
   // The robot's subsystems are defined here...
   ExampleSubsystem m_subsystem;
   Drivetrain m_driveTrain;
+  Indexer m_Indexer;
 
   void ConfigureBindings();
 };
