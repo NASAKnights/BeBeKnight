@@ -11,8 +11,8 @@
 #include "wpi/DataLog.h"
 #include <ctre/phoenix6/controls/DutyCycleOut.hpp>
 #include <units/voltage.h>
+#include <units/velocity.h>
 #include <frc/Encoder.h>
-
 
 namespace ShooterConstants
 {
@@ -38,9 +38,7 @@ namespace ShooterConstants
   // const double kDriveV = 0.20333; // Volts / (rot / s)
   // const double kDriveA = 0.02250; // Volts / (rot / s^2)
 
-  const double kSteerP = 35.0; // TODO: ensure this works with new inversion
-  const double kSteerI = 0.0;
-  const double kSteerD = 0.0;
+  const double kShooterTargetVelocity = 50;
 }
 class Shooter : public frc2::SubsystemBase
 {
@@ -52,20 +50,36 @@ public:
    */
   void Periodic() override;
 
-  void Idle() {
+  void Idle()
+  {
     m_ShooterMotor.SetControl(ctre::phoenix6::controls::VoltageOut{units::volt_t{ShooterConstants::MotorAtIdle}});
   }
+  // This sets the voltage to zero and thus idles the motor
+
+  void Shoot()
+  {
+  }
+
+  void SpinUp()
+  {
+    units::turns_per_second_t targetVelocity = units::turns_per_second_t{ShooterConstants::kShooterTargetVelocity};
+    ctre::phoenix6::controls::VelocityDutyCycle velocityRequest{targetVelocity};
+    m_ShooterMotor.SetControl(velocityRequest);
+  }
+  // this
+
+  double getSpeed()
+  {
+    m_ShooterMotor.GetVelocity().GetValue();
+  }
+  // this gets the speed
 
 private:
-
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 
   ctre::phoenix6::hardware::TalonFX m_ShooterMotor{ShooterConstants::ShooterMotor};
-  // frc::Encoder m_ShooterEncoder{ShooterConstants::ShooterEncoder};  
-  
-
-  
+  // frc::Encoder m_ShooterEncoder{ShooterConstants::ShooterEncoder};
 
   ShooterConstants::ShooterState m_ShooterState;
 
