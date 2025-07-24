@@ -13,6 +13,10 @@
 #include <units/voltage.h>
 #include <units/velocity.h>
 #include <frc/Encoder.h>
+#include <frc/simulation/EncoderSim.h>
+#include <ctre/phoenix6/sim/TalonFXSimState.hpp>
+#include <frc/simulation/DCMotorSim.h>
+#include <frc/simulation/LinearSystemSim.h>
 
 namespace ShooterConstants
 {
@@ -49,6 +53,7 @@ public:
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
+  void SimulationPeriodic();
 
   void Idle()
   {
@@ -80,6 +85,16 @@ private:
 
   ctre::phoenix6::hardware::TalonFX m_ShooterMotor{ShooterConstants::ShooterMotor};
   // frc::Encoder m_ShooterEncoder{ShooterConstants::ShooterEncoder};
+  ctre::phoenix6::sim::TalonFXSimState *m_ShooterMotorSim = &m_ShooterMotor.GetSimState(); // simulate motor state
+  static constexpr double kGearRatio = 10.0;                                               // TODO: ADD THIS AS A CONSTANT FOR SHOOTERS
+  frc::sim::DCMotorSim m_motorSimModel{m_ShooterMotor, kGearRatio, ShooterConstants::ShooterConstants::MOI,
+                                       ShooterConstants::ShooterConstants::mass, ShooterConstants::ShooterConstants::WheelRadius,
+                                       ShooterConstants::ShooterConstants::TrackWidth}; // simulate motor model
+
+  // ctre::m_motorSimModel
+
+  frc::Encoder m_ShooterEncoder{ShooterConstants::ShooterEncoder, ShooterConstants::ShooterEncoder + 1}; // initialize encoder with two channels
+  frc::sim::EncoderSim m_ShooterEncoderSim{m_ShooterEncoder};                                            // simulate encoder
 
   ShooterConstants::ShooterState m_ShooterState;
 

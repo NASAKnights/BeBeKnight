@@ -18,6 +18,9 @@
   "files.associations": {
     "*.tcc": "cpp",
     "optional": "cpp",
-    "utility": "cpp"
+    "utility": "cpp",
+    "system_error": "cpp",
+    "expected": "cpp",
+    "regex": "cpp"
   }
 }
