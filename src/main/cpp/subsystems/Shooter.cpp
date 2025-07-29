@@ -8,7 +8,21 @@ Shooter::Shooter()
     : m_ShooterMotor(ShooterConstants::ShooterMotor),  // Initialize TalonFX motor with CAN ID
       m_ShooterMotorSim(&m_ShooterMotor.GetSimState()) // Initialize simulation state
 {
+
     // Additional initialization logic if needed
+
+    // auto &talonFXSim = m_talonFX.GetSimState();
+
+    // use the motor voltage to calculate new position and velocity
+    // using WPILib's DCMotorSim class for physics simulation
+    m_motorSimModel.SetInputVoltage(ShooterConstants::motorVoltage);
+    m_motorSimModel.Update(20_ms); // assume 20 ms loop time
+
+    // apply the new rotor position and velocity to the TalonFX;
+    // note that this is rotor position/velocity (before gear ratio), but
+    // DCMotorSim returns mechanism position/velocity (after gear ratio)
+    m_ShooterMotorSim->SetRawRotorPosition(kGearRatio * m_motorSimModel.GetAngularPosition());
+    m_ShooterMotorSim->SetRotorVelocity(kGearRatio * m_motorSimModel.GetAngularVelocity());
 }
 
 // This method will be called once per scheduler run
@@ -24,7 +38,7 @@ void Shooter::Periodic()
     m_motorSimModel.Update(20_ms); // assume 20 ms loop time
 
     // Log simulated values to SmartDashboard
-    frc::SmartDashboard::PutNumber("Simulated Shooter Velocity", m_ShooterMotorSim..value());
+    frc::SmartDashboard::PutNumber("Simulated Shooter Velocity", (kGearRatio * m_motorSimModel.GetAngularVelocity()).value());
     frc::SmartDashboard::PutNumber("Simulated Shooter Voltage", m_ShooterMotorSim->GetMotorVoltage().value());
 
     switch (m_ShooterState)

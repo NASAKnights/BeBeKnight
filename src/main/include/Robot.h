@@ -32,10 +32,7 @@ private:
   // doesn't have undefined behavior and potentially crash.
   std::optional<frc2::CommandPtr> m_autonomousCommand;
 
-  std::optional<frc2::CommandPtr> m_autonomousCommand;
   RobotContainer m_container;
 
   Shooter m_shooter; // Add this line to declare the Shooter subsystem
-
-  RobotContainer m_container;
 };

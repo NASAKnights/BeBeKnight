@@ -17,6 +17,10 @@
 #include <ctre/phoenix6/sim/TalonFXSimState.hpp>
 #include <frc/simulation/DCMotorSim.h>
 #include <frc/simulation/LinearSystemSim.h>
+#include <frc/system/plant/LinearSystemId.h>
+#include <frc/system/LinearSystem.h>
+
+#include <frc/system/plant/DCMotor.h>
 
 namespace ShooterConstants
 {
@@ -43,6 +47,9 @@ namespace ShooterConstants
   // const double kDriveA = 0.02250; // Volts / (rot / s^2)
 
   const double kShooterTargetVelocity = 50;
+
+  const units::volt_t motorVoltage = units::volt_t{12.0};
+
 }
 class Shooter : public frc2::SubsystemBase
 {
@@ -53,7 +60,7 @@ public:
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
-  void SimulationPeriodic();
+  // void SimulationPeriodic();
 
   void Idle()
   {
@@ -75,7 +82,7 @@ public:
 
   double getSpeed()
   {
-    m_ShooterMotor.GetVelocity().GetValue();
+    return double{m_ShooterMotor.GetVelocity().GetValue()};
   }
   // this gets the speed
 
@@ -87,9 +94,11 @@ private:
   // frc::Encoder m_ShooterEncoder{ShooterConstants::ShooterEncoder};
   ctre::phoenix6::sim::TalonFXSimState *m_ShooterMotorSim = &m_ShooterMotor.GetSimState(); // simulate motor state
   static constexpr double kGearRatio = 10.0;                                               // TODO: ADD THIS AS A CONSTANT FOR SHOOTERS
-  frc::sim::DCMotorSim m_motorSimModel{m_ShooterMotor, kGearRatio, ShooterConstants::ShooterConstants::MOI,
-                                       ShooterConstants::ShooterConstants::mass, ShooterConstants::ShooterConstants::WheelRadius,
-                                       ShooterConstants::ShooterConstants::TrackWidth}; // simulate motor model
+  // frc::sim::DCMotorSim m_motorSimModel{m_ShooterMotor, kGearRatio, ShooterConstants::ShooterConstants::MOI,
+  //                                      ShooterConstants::ShooterConstants::mass, ShooterConstants::ShooterConstants::WheelRadius,
+  //                                      ShooterConstants::ShooterConstants::TrackWidth}; // simulate motor model
+
+  frc::sim::DCMotorSim m_motorSimModel{frc::LinearSystemId::DCMotorSystem(frc::DCMotor::KrakenX60FOC(1), 0.001_kg_sq_m, kGearRatio), frc::DCMotor::KrakenX60FOC(1)};
 
   // ctre::m_motorSimModel
 
