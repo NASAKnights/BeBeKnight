@@ -4,8 +4,11 @@
 
 #pragma once
 
+#include "frc/DataLogManager.h"
 #include <frc2/command/SubsystemBase.h>
 #include <frc/DigitalInput.h>
+#include <frc/motorcontrol/PWMSparkMax.h>
+#include <wpi/DataLog.h>
 
 class Indexer : public frc2::SubsystemBase
 {
@@ -13,13 +16,28 @@ public:
   Indexer();
 
   /**
-   * Will be called periodically whenever the CommandScheduler runs.
+   * Called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
 
-  bool hasBall;
+  /**
+   * Moves the indexer mechanism.
+   */
+  void moveIndexer();
+
+  /**
+   * Stops the indexer mechanism.
+   */
+  void stopIndexer();
+
+  /**
+   * Checks if a ball is detected by the limit switch.
+   * @return True if a ball is detected, false otherwise.
+   */
+  bool hasBall();
 
 private:
-  // Components (e.g. motor controllers and sensors) should generally be
-  // declared private and exposed only through public methods.
+  frc::DigitalInput limitSwitch;
+  frc::PWMSparkMax indexerMotor{0}; // Replace 0 with the actual PWM port
+  wpi::log::BooleanLogEntry m_BallLog;
 };

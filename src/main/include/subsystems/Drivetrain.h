@@ -28,7 +28,6 @@
 #include <frc/simulation/EncoderSim.h>
 #include <frc/simulation/AnalogGyroSim.h>
 #include <frc/RobotController.h>
-
 #include "frc/estimator/DifferentialDrivePoseEstimator.h"
 #include "frc/StateSpaceUtil.h"
 
