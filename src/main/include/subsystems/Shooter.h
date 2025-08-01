@@ -60,31 +60,11 @@ public:
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
-  // void SimulationPeriodic();
 
-  void Idle()
-  {
-    m_ShooterMotor.SetControl(ctre::phoenix6::controls::VoltageOut{units::volt_t{ShooterConstants::MotorAtIdle}});
-  }
-  // This sets the voltage to zero and thus idles the motor
-
-  void Shoot()
-  {
-  }
-
-  void SpinUp()
-  {
-    units::turns_per_second_t targetVelocity = units::turns_per_second_t{ShooterConstants::kShooterTargetVelocity};
-    ctre::phoenix6::controls::VelocityDutyCycle velocityRequest{targetVelocity};
-    m_ShooterMotor.SetControl(velocityRequest);
-  }
-  // this
-
-  double getSpeed()
-  {
-    return double{m_ShooterMotor.GetVelocity().GetValue()};
-  }
-  // this gets the speed
+  void Idle();       // Declaration only
+  void Shoot();      // Declaration only
+  void SpinUp();     // Declaration only
+  double getSpeed(); // Declaration only
 
 private:
   // Components (e.g. motor controllers and sensors) should generally be

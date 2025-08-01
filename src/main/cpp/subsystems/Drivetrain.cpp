@@ -27,9 +27,9 @@ void Drivetrain::SimulationPeriodic()
       m_rightLeader.Get() * units::volt_t(frc::RobotController::GetInputVoltage()));
 
   m_leftEncoderSim.SetDistance(m_differentialsim.GetLeftPosition().value());
-  m_leftEncoderSim.SetRate(m_differentialsim.GetLeftVelocity().value());
+  // m_leftEncoderSim.SetRate(m_differentialsim.GetLeftVelocity().value());
   m_rightEncoderSim.SetDirection(m_differentialsim.GetRightPosition().value());
-  m_rightEncoderSim.SetRate(m_differentialsim.GetRightVelocity().value());
+  // m_rightEncoderSim.SetRate(m_differentialsim.GetRightVelocity().value());
   m_gyroSim.SetAngle(double{-m_differentialsim.GetHeading().Degrees()});
   // m_differentialsim.getPose
 }

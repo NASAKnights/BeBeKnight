@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "subsystems/Shooter.h"
+#include <frc/smartdashboard/SmartDashboard.h>
 
 Shooter::Shooter()
     : m_ShooterMotor(ShooterConstants::ShooterMotor),  // Initialize TalonFX motor with CAN ID
@@ -57,5 +58,28 @@ void Shooter::Periodic()
     }
 
     // Log real-world values
-    frc::SmartDashboard::PutNumber("Shooter Velocity", getSpeed());
+    // frc::SmartDashboard::PutNumber("Shooter Velocity", getSpeed());
 }
+
+void Shooter::Idle()
+{
+    m_ShooterMotor.SetControl(ctre::phoenix6::controls::VoltageOut{units::volt_t{ShooterConstants::MotorAtIdle}});
+}
+
+void Shooter::Shoot()
+{
+    // Implementation for Shoot (currently empty)
+}
+
+void Shooter::SpinUp()
+{
+    m_ShooterMotor.SetControl(ctre::phoenix6::controls::DutyCycleOut{0.8}); // Example: 80% power
+
+    // units::turns_per_second_t targetVelocity = units::turns_per_second_t{ShooterConstants::kShooterTargetVelocity};
+    // ctre::phoenix6::controls::VelocityDutyCycle velocityRequest{targetVelocity};
+    // m_ShooterMotor.SetControl(velocityRequest);
+}
+
+// double Shooter::getSpeed() {
+//     return m_ShooterMotor.GetVelocity().GetValue();    //TODO most likely delete this function, as it uses the velocity,
+// }                                                      //which we don't have access to due to the lack of encoders
