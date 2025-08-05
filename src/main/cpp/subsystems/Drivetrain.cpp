@@ -23,8 +23,8 @@ void Drivetrain::SimulationPeriodic()
   m_differentialsim.GetPose();
 
   m_differentialsim.SetInputs(
-      m_leftLeader.Get() * units::volt_t(frc::RobotController::GetInputVoltage()),
-      m_rightLeader.Get() * units::volt_t(frc::RobotController::GetInputVoltage()));
+      m_leftLeader.GetMotorOutputVoltage() * units::volt_t(frc::RobotController::GetInputVoltage()),
+      m_rightLeader.GetMotorOutputVoltage() * units::volt_t(frc::RobotController::GetInputVoltage()));
 
   m_leftEncoderSim.SetDistance(m_differentialsim.GetLeftPosition().value());
   // m_leftEncoderSim.SetRate(m_differentialsim.GetLeftVelocity().value());
@@ -36,11 +36,11 @@ void Drivetrain::SimulationPeriodic()
 
 void Drivetrain::SetSpeeds(const frc::DifferentialDriveWheelSpeeds &speeds)
 {
-  const auto leftFeedforward = m_feedforward.Calculate(speeds.left);
-  const auto rightFeedforward = m_feedforward.Calculate(speeds.right);
-  const double leftOutput = m_leftPIDController.Calculate(
+  auto leftFeedforward = m_feedforward.Calculate(speeds.left);
+  auto rightFeedforward = m_feedforward.Calculate(speeds.right);
+  double leftOutput = m_leftPIDController.Calculate(
       m_leftEncoder.GetRate(), speeds.left.value());
-  const double rightOutput = m_rightPIDController.Calculate(
+  double rightOutput = m_rightPIDController.Calculate(
       m_rightEncoder.GetRate(), speeds.right.value());
   if constexpr (frc::RobotBase::IsSimulation())
   {
@@ -49,8 +49,10 @@ void Drivetrain::SetSpeeds(const frc::DifferentialDriveWheelSpeeds &speeds)
     return;
   }
 
-  m_leftLeader.SetVoltage(units::volt_t{leftOutput} + leftFeedforward);
-  m_rightLeader.SetVoltage(units::volt_t{rightOutput} + rightFeedforward);
+  m_leftLeader.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput,
+                   (leftOutput + leftFeedforward.value()) / frc::RobotController::GetInputVoltage());
+  m_rightLeader.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput,
+                    (rightOutput + rightFeedforward.value()) / frc::RobotController::GetInputVoltage());
 }
 void Drivetrain::Drive(units::meters_per_second_t xSpeed,
                        units::radians_per_second_t rot)

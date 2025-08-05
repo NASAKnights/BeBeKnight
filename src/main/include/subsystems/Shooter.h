@@ -19,6 +19,7 @@
 #include <frc/simulation/LinearSystemSim.h>
 #include <frc/system/plant/LinearSystemId.h>
 #include <frc/system/LinearSystem.h>
+#include <ctre/phoenix/motorcontrol/can/VictorSPX.h>
 
 #include <frc/system/plant/DCMotor.h>
 
@@ -46,7 +47,7 @@ namespace ShooterConstants
   // const double kDriveV = 0.20333; // Volts / (rot / s)
   // const double kDriveA = 0.02250; // Volts / (rot / s^2)
 
-  const double kShooterTargetVelocity = 50;
+  // const double kShooterTargetVelocity = 50;
 
   const units::volt_t motorVoltage = units::volt_t{12.0};
 
@@ -87,7 +88,9 @@ private:
 
   ShooterConstants::ShooterState m_ShooterState;
 
-  wpi::log::DoubleLogEntry m_VelocityLog;
+  // wpi::log::DoubleLogEntry m_VelocityLog;
   wpi::log::DoubleLogEntry m_VoltageLog;
   wpi::log::DoubleLogEntry m_CurrentLog;
-};
+
+  ctre::phoenix::motorcontrol::can::VictorSPX m_leftShooterMotor{6};  // can ID 6, change as needed
+  ctre::phoenix::motorcontrol::can::VictorSPX m_rightShooterMotor{7}; // can ID 7, change as needed

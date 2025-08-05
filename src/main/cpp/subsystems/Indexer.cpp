@@ -26,10 +26,10 @@ bool Indexer::hasBall()
 
 void Indexer::moveIndexer()
 {
-    indexerMotor.Set(0.5); // Move the motor at 50% speed
+    m_indexerMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.5); // Set motor to 50% power
 }
 
 void Indexer::stopIndexer()
 {
-    indexerMotor.Set(0.0); // Stop the motor
+    m_indexerMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.0); // Stop the motor
 }

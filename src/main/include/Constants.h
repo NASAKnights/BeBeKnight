@@ -13,10 +13,11 @@
  * command-specific namespaces within this header, which can then be used where
  * they are needed.
  */
-#include <units/velocity.h>
+// #include <units/velocity.h>
 #include <units/voltage.h>
 #include <numbers>
 #include <units/moment_of_inertia.h>
+#include <units/velocity.h>
 
 namespace OperatorConstants
 {

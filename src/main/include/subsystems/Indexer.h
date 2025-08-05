@@ -9,6 +9,7 @@
 #include <frc/DigitalInput.h>
 #include <frc/motorcontrol/PWMSparkMax.h>
 #include <wpi/DataLog.h>
+#include <ctre/phoenix/motorcontrol/can/VictorSPX.h>
 
 class Indexer : public frc2::SubsystemBase
 {
@@ -38,6 +39,6 @@ public:
 
 private:
   frc::DigitalInput limitSwitch;
-  frc::PWMSparkMax indexerMotor{0}; // Replace 0 with the actual PWM port
+  ctre::phoenix::motorcontrol::can::VictorSPX m_indexerMotor{3}; // can ID 3, change as needed
   wpi::log::BooleanLogEntry m_BallLog;
 };
