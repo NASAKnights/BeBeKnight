@@ -20,7 +20,7 @@
 #include <frc/system/plant/LinearSystemId.h>
 #include <frc/system/LinearSystem.h>
 #include <ctre/phoenix/motorcontrol/can/VictorSPX.h>
-
+#include <frc/Timer.h>
 #include <frc/system/plant/DCMotor.h>
 
 namespace ShooterConstants
@@ -28,8 +28,9 @@ namespace ShooterConstants
   enum ShooterState
   {
     Idle,
-    SpinUp,
-    Shoot
+    SpinningUp,
+    SpunUp,
+    SpinningDown
   };
 
   static constexpr int ShooterMotor = 1;
@@ -94,3 +95,6 @@ private:
 
   ctre::phoenix::motorcontrol::can::VictorSPX m_leftShooterMotor{6};  // can ID 6, change as needed
   ctre::phoenix::motorcontrol::can::VictorSPX m_rightShooterMotor{7}; // can ID 7, change as needed
+
+  frc::Timer timer;
+};

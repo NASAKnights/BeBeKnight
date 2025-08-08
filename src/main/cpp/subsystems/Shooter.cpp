@@ -18,42 +18,29 @@ Shooter::Shooter()
     // using WPILib's DCMotorSim class for physics simulation
     m_motorSimModel.SetInputVoltage(ShooterConstants::motorVoltage);
     m_motorSimModel.Update(20_ms); // assume 20 ms loop time
-
-    // apply the new rotor position and velocity to the TalonFX;
-    // note that this is rotor position/velocity (before gear ratio), but
-    // DCMotorSim returns mechanism position/velocity (after gear ratio)
-    m_ShooterMotorSim->SetRawRotorPosition(kGearRatio * m_motorSimModel.GetAngularPosition());
-    m_ShooterMotorSim->SetRotorVelocity(kGearRatio * m_motorSimModel.GetAngularVelocity());
 }
 
 // This method will be called once per scheduler run
 void Shooter::Periodic()
 {
-    // Update the simulated motor state
-    m_ShooterMotorSim->SetSupplyVoltage(m_ShooterMotor.GetSupplyVoltage().GetValue());
-
-    // Update the encoder simulation based on the motor velocity
-
-    m_ShooterEncoderSim.SetRate(m_ShooterMotor.GetVelocity().GetValueAsDouble());
-    m_motorSimModel.SetInputVoltage(m_ShooterMotor.GetSupplyVoltage().GetValue());
-    m_motorSimModel.Update(20_ms); // assume 20 ms loop time
-
-    // Log simulated values to SmartDashboard
-    frc::SmartDashboard::PutNumber("Simulated Shooter Velocity", (kGearRatio * m_motorSimModel.GetAngularVelocity()).value());
-    frc::SmartDashboard::PutNumber("Simulated Shooter Voltage", m_ShooterMotorSim->GetMotorVoltage().value());
-
     switch (m_ShooterState)
     {
     case ShooterConstants::Idle:
-        Idle();
+        m_ShooterMotor.SetControl(ctre::phoenix6::controls::VoltageOut{units::volt_t{ShooterConstants::MotorAtIdle}});
+        // TODO: OUPUT THIS STATE TO SHUFFLEBOARD
         break;
-    case ShooterConstants::SpinUp:
+    case ShooterConstants::SpinningUp:
         // Spin up motor to speed
-        SpinUp();
+        // SpinUp();
+        m_ShooterMotor.SetControl(ctre::phoenix6::controls::DutyCycleOut{0.8});
+        if (timer.HasElapsed(2_s))
+        {
+            m_ShooterState = ShooterConstants::SpunUp;
+        }
         break;
-    case ShooterConstants::Shoot:
+    case ShooterConstants::SpunUp:
         // Fire game object once up to speed and detected we have a game object in indexer
-        Shoot();
+
         break;
     }
 
@@ -64,11 +51,6 @@ void Shooter::Periodic()
 void Shooter::Idle()
 {
     m_ShooterMotor.SetControl(ctre::phoenix6::controls::VoltageOut{units::volt_t{ShooterConstants::MotorAtIdle}});
-}
-
-void Shooter::Shoot()
-{
-    // Implementation for Shoot (currently empty)
 }
 
 void Shooter::SpinUp()
