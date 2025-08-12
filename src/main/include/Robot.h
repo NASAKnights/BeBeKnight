@@ -9,6 +9,8 @@
 #include <frc/TimedRobot.h>
 #include <frc2/command/CommandPtr.h>
 #include "subsystems/Shooter.h"
+#include <frc2/command/button/JoystickButton.h>
+#include "commands/Shoot.h"
 
 #include "RobotContainer.h"
 
@@ -35,4 +37,6 @@ private:
   RobotContainer m_container;
 
   Shooter m_shooter; // Add this line to declare the Shooter subsystem
+
+  frc::Joystick m_driverController{0};
 };

@@ -32,11 +32,7 @@ void Shooter::Periodic()
     case ShooterConstants::SpinningUp:
         // Spin up motor to speed
         // SpinUp();
-        m_ShooterMotor.SetControl(ctre::phoenix6::controls::DutyCycleOut{0.8});
-        if (timer.HasElapsed(2_s))
-        {
-            m_ShooterState = ShooterConstants::SpunUp;
-        }
+
         break;
     case ShooterConstants::SpunUp:
         // Fire game object once up to speed and detected we have a game object in indexer
@@ -48,18 +44,27 @@ void Shooter::Periodic()
     // frc::SmartDashboard::PutNumber("Shooter Velocity", getSpeed());
 }
 
-void Shooter::Idle()
+void Shooter::Idle(double stopSpeed)
 {
-    m_ShooterMotor.SetControl(ctre::phoenix6::controls::VoltageOut{units::volt_t{ShooterConstants::MotorAtIdle}});
+    // m_ShooterMotor.SetControl(ctre::phoenix6::controls::VoltageOut{units::volt_t{ShooterConstants::MotorAtIdle}});
+
+    m_leftShooterMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, stopSpeed);
+    m_rightShooterMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, stopSpeed);
 }
 
-void Shooter::SpinUp()
-{
-    m_ShooterMotor.SetControl(ctre::phoenix6::controls::DutyCycleOut{0.8}); // Example: 80% power
+// void Shooter::SpinUp()
+// {
+//     m_ShooterMotor.SetControl(ctre::phoenix6::controls::DutyCycleOut{0.8}); // Example: 80% power
 
-    // units::turns_per_second_t targetVelocity = units::turns_per_second_t{ShooterConstants::kShooterTargetVelocity};
-    // ctre::phoenix6::controls::VelocityDutyCycle velocityRequest{targetVelocity};
-    // m_ShooterMotor.SetControl(velocityRequest);
+//     // units::turns_per_second_t targetVelocity = units::turns_per_second_t{ShooterConstants::kShooterTargetVelocity};
+//     // ctre::phoenix6::controls::VelocityDutyCycle velocityRequest{targetVelocity};
+//     // m_ShooterMotor.SetControl(velocityRequest);
+// }
+
+void Shooter::SetSpeed(double speed)
+{
+    m_leftShooterMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, speed);
+    m_rightShooterMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, speed);
 }
 
 // double Shooter::getSpeed() {

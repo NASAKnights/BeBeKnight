@@ -63,10 +63,12 @@ public:
    */
   void Periodic() override;
 
-  void Idle();       // Declaration only
-  void Shoot();      // Declaration only
-  void SpinUp();     // Declaration only
-  double getSpeed(); // Declaration only
+  void Idle(double stopSpeed); // Declaration only
+  void Shoot();                // Declaration only
+  void SpinUp();               // Declaration only
+  double getSpeed();           // Declaration only
+
+  void SetSpeed(double speed);
 
 private:
   // Components (e.g. motor controllers and sensors) should generally be

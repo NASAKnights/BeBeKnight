@@ -26,7 +26,12 @@ void Robot::RobotPeriodic()
  * can use it to reset any subsystem information you want to clear when the
  * robot is disabled.
  */
-void Robot::DisabledInit() {}
+void Robot::DisabledInit()
+{
+
+  // square for shooting
+  frc2::JoystickButton(&m_driverController, 1).WhileTrue(Shoot(&m_shooter).ToPtr());
+}
 
 void Robot::DisabledPeriodic() {}
 

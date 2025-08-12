@@ -4,17 +4,37 @@
 
 #include "commands/Shoot.h"
 
+Shoot::Shoot(Shooter *shooter) : m_shooter{shooter}
+{
+  AddRequirements(m_shooter);
+}
+
 // Called when the command is initially scheduled.
-void Shoot::Initialize() {}
+void Shoot::Initialize()
+{
+
+  m_shooter->SetSpeed(0.8);
+  timer.Start();
+}
 
 // Called repeatedly when this Command is scheduled to run
-void Shoot::Execute() {}
+void Shoot::Execute()
+{
+  if (timer.HasElapsed(2_s))
+  {
+    finished = true;
+  }
+}
 
 // Called once the command ends or is interrupted.
-void Shoot::End(bool interrupted) {}
+void Shoot::End(bool interrupted)
+{
+
+  m_shooter->Idle(0.0);
+}
 
 // Returns true when the command should end.
 bool Shoot::IsFinished()
 {
-  return false;
+  return finished;
 }
