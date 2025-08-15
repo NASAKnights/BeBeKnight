@@ -31,6 +31,7 @@
 #include "frc/estimator/DifferentialDrivePoseEstimator.h"
 #include "frc/StateSpaceUtil.h"
 #include <ctre/phoenix/motorcontrol/can/VictorSPX.h>
+#include <frc/drive/DifferentialDrive.h>
 
 class Drivetrain : public frc2::SubsystemBase
 {
@@ -44,21 +45,21 @@ public:
 
     frc::SmartDashboard::PutData("Field", &m_field);
 
-    m_gyro.Reset();
+    // m_gyro.Reset();
     // Set the distance per pulse for the drive encoders. We can use the distance traveled for
     // one rotation of the wheel divided by the encoder resolution.
-    m_leftEncoder.SetDistancePerPulse(2 * std::numbers::pi * DrivetrainConstants::WheelRadius.value() / DrivetrainConstants::EncoderResolution);
-    m_rightEncoder.SetDistancePerPulse(2 * std::numbers::pi * DrivetrainConstants::WheelRadius.value() / DrivetrainConstants::EncoderResolution);
+    // m_leftEncoder.SetDistancePerPulse(2 * std::numbers::pi * DrivetrainConstants::WheelRadius.value() / DrivetrainConstants::EncoderResolution);
+    // m_rightEncoder.SetDistancePerPulse(2 * std::numbers::pi * DrivetrainConstants::WheelRadius.value() / DrivetrainConstants::EncoderResolution);
 
-    m_leftEncoder.Reset();
-    m_rightEncoder.Reset();
+    // m_leftEncoder.Reset();
+    // m_rightEncoder.Reset();
   }
   // static constexpr units::meters_per_second_t kMaxSpeed = DrivetrainConstants::MaxSpeed; // 1 meter per second
   // static constexpr units::radians_per_second_t kMaxAngularSpeed{
   //     std::numbers::pi}; // 1/2 rotation per second
 
   void SetSpeeds(const frc::DifferentialDriveWheelSpeeds &speeds);
-  void Drive(units::meters_per_second_t xSpeed, units::radians_per_second_t rot);
+  void Drive(double xSpeed, double rot);
   void UpdateOdometry();
 
   /**
@@ -74,6 +75,7 @@ private:
   // frc::DCMotor driveMotor, double gearing, units::moment_of_inertia::kilogram_square_meter_t J,
   // units::mass::kilogram_t mass, units::length::meter_t wheelRadius,
   // units::length::meter_t trackWidth, const std::array<double, 7U> &measurementStdDevs = {}
+
   frc::DCMotor driveMotor = frc::DCMotor::CIM(1);
 
   frc::sim::DifferentialDrivetrainSim m_differentialsim{driveMotor, DrivetrainConstants::Gearing,
@@ -87,32 +89,37 @@ private:
   ctre::phoenix::motorcontrol::can::VictorSPX m_leftLeader{4};  // CAN ID 4
   ctre::phoenix::motorcontrol::can::VictorSPX m_rightLeader{5}; // CAN ID 5
 
-  frc::Encoder m_leftEncoder{DrivetrainConstants::LeftEncoder1, DrivetrainConstants::LeftEncoder2};
-  frc::Encoder m_rightEncoder{DrivetrainConstants::RightEncoder1, DrivetrainConstants::RightEncoder2};
+  frc::DifferentialDrive m_diffDrive{
+      [&](double output)
+      { m_leftLeader.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, output); },
+      [&](double output)
+      { m_rightLeader.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, output); }};
+  // frc::Encoder m_leftEncoder{DrivetrainConstants::LeftEncoder1, DrivetrainConstants::LeftEncoder2};
+  // frc::Encoder m_rightEncoder{DrivetrainConstants::RightEncoder1, DrivetrainConstants::RightEncoder2};
 
-  frc::sim::EncoderSim m_leftEncoderSim{m_leftEncoder};
-  frc::sim::EncoderSim m_rightEncoderSim{m_rightEncoder};
+  // frc::sim::EncoderSim m_leftEncoderSim{m_leftEncoder};
+  // frc::sim::EncoderSim m_rightEncoderSim{m_rightEncoder};
 
   frc::PIDController m_leftPIDController{DrivetrainConstants::P, DrivetrainConstants::I, DrivetrainConstants::D};
   frc::PIDController m_rightPIDController{DrivetrainConstants::P, DrivetrainConstants::I, DrivetrainConstants::D};
 
-  frc::AnalogGyro m_gyro{DrivetrainConstants::gyro};
+  // frc::AnalogGyro m_gyro{DrivetrainConstants::gyro};
 
-  frc::sim::AnalogGyroSim m_gyroSim{m_gyro};
+  // frc::sim::AnalogGyroSim m_gyroSim{m_gyro};
 
   frc::DifferentialDriveKinematics m_kinematics{DrivetrainConstants::TrackWidth};
-  frc::DifferentialDriveOdometry m_odometry{
-      m_gyro.GetRotation2d(), units::meter_t{m_leftEncoder.GetDistance()},
-      units::meter_t{m_rightEncoder.GetDistance()}};
+  // frc::DifferentialDriveOdometry m_odometry{
+  // m_gyro.GetRotation2d(), units::meter_t{m_leftEncoder.GetDistance()},
+  // units::meter_t{m_rightEncoder.GetDistance()}};
 
   frc::SimpleMotorFeedforward<units::meters> m_feedforward{DrivetrainConstants::StaticFeedFoward, DrivetrainConstants::VelocityFeedFoward};
 
-  frc::DifferentialDrivePoseEstimator m_poseEstimator{
-      m_kinematics,
-      m_gyro.GetRotation2d(),
-      units::meter_t{m_leftEncoder.GetDistance()},
-      units::meter_t{m_rightEncoder.GetDistance()},
-      frc::Pose2d{},
-      {0.01, 0.01, 0.01},
-      {0.1, 0.1, 0.1}};
+  // frc::DifferentialDrivePoseEstimator m_poseEstimator{
+  //     m_kinematics,
+  //     m_gyro.GetRotation2d(),
+  //     units::meter_t{m_leftEncoder.GetDistance()},
+  //     units::meter_t{m_rightEncoder.GetDistance()},
+  //     frc::Pose2d{},
+  //     {0.01, 0.01, 0.01},
+  //     {0.1, 0.1, 0.1}};
 };

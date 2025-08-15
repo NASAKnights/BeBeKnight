@@ -7,6 +7,7 @@
 #include <frc2/command/SubsystemBase.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <ctre/phoenix6/TalonFX.hpp>
+#include <ctre/phoenix/motorcontrol/can/TalonSRX.h>
 #include <frc2/command/SubsystemBase.h>
 #include "wpi/DataLog.h"
 #include <ctre/phoenix6/controls/DutyCycleOut.hpp>
@@ -33,7 +34,9 @@ namespace ShooterConstants
     SpinningDown
   };
 
-  static constexpr int ShooterMotor = 1;
+  // static constexpr int ShooterMotor = 1;
+  static constexpr int shooterMotorMain = 7;
+  static constexpr int shooterMotorFollow = 8;
   static constexpr double MotorAtIdle = 0.0;
   static constexpr int ShooterEncoder = 1;
 
@@ -63,10 +66,10 @@ public:
    */
   void Periodic() override;
 
-  void Idle(double stopSpeed); // Declaration only
-  void Shoot();                // Declaration only
-  void SpinUp();               // Declaration only
-  double getSpeed();           // Declaration only
+  void Idle(double setSpeed); // Declaration only
+  void Shoot();               // Declaration only
+  void SpinUp();              // Declaration only
+  double getSpeed();          // Declaration only
 
   void SetSpeed(double speed);
 
@@ -74,10 +77,9 @@ private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 
-  ctre::phoenix6::hardware::TalonFX m_ShooterMotor{ShooterConstants::ShooterMotor};
   // frc::Encoder m_ShooterEncoder{ShooterConstants::ShooterEncoder};
-  ctre::phoenix6::sim::TalonFXSimState *m_ShooterMotorSim = &m_ShooterMotor.GetSimState(); // simulate motor state
-  static constexpr double kGearRatio = 10.0;                                               // TODO: ADD THIS AS A CONSTANT FOR SHOOTERS
+  // ctre::phoenix6::sim::TalonFXSimState *m_ShooterMotorSim = &m_ShooterMotor.GetSimState(); // simulate motor state
+  static constexpr double kGearRatio = 10.0; // TODO: ADD THIS AS A CONSTANT FOR SHOOTERS
   // frc::sim::DCMotorSim m_motorSimModel{m_ShooterMotor, kGearRatio, ShooterConstants::ShooterConstants::MOI,
   //                                      ShooterConstants::ShooterConstants::mass, ShooterConstants::ShooterConstants::WheelRadius,
   //                                      ShooterConstants::ShooterConstants::TrackWidth}; // simulate motor model
@@ -86,8 +88,8 @@ private:
 
   // ctre::m_motorSimModel
 
-  frc::Encoder m_ShooterEncoder{ShooterConstants::ShooterEncoder, ShooterConstants::ShooterEncoder + 1}; // initialize encoder with two channels
-  frc::sim::EncoderSim m_ShooterEncoderSim{m_ShooterEncoder};                                            // simulate encoder
+  // frc::Encoder m_ShooterEncoder{ShooterConstants::ShooterEncoder, ShooterConstants::ShooterEncoder + 1}; // initialize encoder with two channels
+  // frc::sim::EncoderSim m_ShooterEncoderSim{m_ShooterEncoder};                                            // simulate encoder
 
   ShooterConstants::ShooterState m_ShooterState;
 
@@ -95,8 +97,8 @@ private:
   wpi::log::DoubleLogEntry m_VoltageLog;
   wpi::log::DoubleLogEntry m_CurrentLog;
 
-  ctre::phoenix::motorcontrol::can::VictorSPX m_leftShooterMotor{6};  // can ID 6, change as needed
-  ctre::phoenix::motorcontrol::can::VictorSPX m_rightShooterMotor{7}; // can ID 7, change as needed
+  ctre::phoenix::motorcontrol::can::TalonSRX m_leftShooterMotor{6};  // can ID 6, change as needed
+  ctre::phoenix::motorcontrol::can::TalonSRX m_rightShooterMotor{7}; // can ID 7, change as needed
 
   frc::Timer timer;
 };

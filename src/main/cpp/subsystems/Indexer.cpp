@@ -7,7 +7,7 @@
 
 // This method will be called once per scheduler run
 
-Indexer::Indexer() : limitSwitch(1) // Replace 1 with the actual digital input channel
+Indexer::Indexer() // Replace 1 with the actual digital input channel
 {
     wpi::log::DataLog &log = frc::DataLogManager::GetLog();
     m_BallLog = wpi::log::BooleanLogEntry(log, "/Indexer/Note");

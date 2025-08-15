@@ -7,7 +7,8 @@
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
 #include "subsystems/Shooter.h"
-#include "Robot.h"
+#include "subsystems/Indexer.h"
+// #include "Robot.h"
 #include <frc/Timer.h>
 
 /**
@@ -24,7 +25,7 @@ public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-  Shoot(Shooter *shooter);
+  Shoot(Shooter *shooter, Indexer *indexer);
 
   void Initialize() override;
 
@@ -37,6 +38,7 @@ public:
   bool finished = false;
 
   Shooter *m_shooter;
+  Indexer *m_indexer;
 
   frc::Timer timer;
 };

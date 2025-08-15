@@ -6,8 +6,8 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 Shooter::Shooter()
-    : m_ShooterMotor(ShooterConstants::ShooterMotor),  // Initialize TalonFX motor with CAN ID
-      m_ShooterMotorSim(&m_ShooterMotor.GetSimState()) // Initialize simulation state
+// : m_ShooterMotor(ShooterConstants::ShooterMotor),  // Initialize TalonFX motor with CAN ID
+//   m_ShooterMotorSim(&m_ShooterMotor.GetSimState()) // Initialize simulation state
 {
 
     // Additional initialization logic if needed
@@ -18,55 +18,45 @@ Shooter::Shooter()
     // using WPILib's DCMotorSim class for physics simulation
     m_motorSimModel.SetInputVoltage(ShooterConstants::motorVoltage);
     m_motorSimModel.Update(20_ms); // assume 20 ms loop time
+
+    m_leftShooterMotor.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    m_rightShooterMotor.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+
+    ctre::phoenix::motorcontrol::SupplyCurrentLimitConfiguration shooterMotorConfig;
+    shooterMotorConfig.currentLimit = 35;
+    shooterMotorConfig.triggerThresholdCurrent = 40;
+    shooterMotorConfig.triggerThresholdTime = 0.1;
+
+    m_leftShooterMotor.ConfigSupplyCurrentLimit(shooterMotorConfig);
+    m_rightShooterMotor.ConfigSupplyCurrentLimit(shooterMotorConfig);
+    m_leftShooterMotor.EnableCurrentLimit(true);
+    m_rightShooterMotor.EnableCurrentLimit(true);
+
+    m_rightShooterMotor.Follow(m_leftShooterMotor);
 }
 
 // This method will be called once per scheduler run
 void Shooter::Periodic()
 {
-    switch (m_ShooterState)
-    {
-    case ShooterConstants::Idle:
-        m_ShooterMotor.SetControl(ctre::phoenix6::controls::VoltageOut{units::volt_t{ShooterConstants::MotorAtIdle}});
-        // TODO: OUPUT THIS STATE TO SHUFFLEBOARD
-        break;
-    case ShooterConstants::SpinningUp:
-        // Spin up motor to speed
-        // SpinUp();
-
-        break;
-    case ShooterConstants::SpunUp:
-        // Fire game object once up to speed and detected we have a game object in indexer
-
-        break;
-    }
 
     // Log real-world values
     // frc::SmartDashboard::PutNumber("Shooter Velocity", getSpeed());
 }
 
-void Shooter::Idle(double stopSpeed)
+void Shooter::Idle(double shootSpeed)
 {
     // m_ShooterMotor.SetControl(ctre::phoenix6::controls::VoltageOut{units::volt_t{ShooterConstants::MotorAtIdle}});
 
-    m_leftShooterMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, stopSpeed);
-    m_rightShooterMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, stopSpeed);
+    m_leftShooterMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, shootSpeed);
 }
 
-// void Shooter::SpinUp()
-// {
-//     m_ShooterMotor.SetControl(ctre::phoenix6::controls::DutyCycleOut{0.8}); // Example: 80% power
-
-//     // units::turns_per_second_t targetVelocity = units::turns_per_second_t{ShooterConstants::kShooterTargetVelocity};
-//     // ctre::phoenix6::controls::VelocityDutyCycle velocityRequest{targetVelocity};
-//     // m_ShooterMotor.SetControl(velocityRequest);
-// }
+void Shooter::SpinUp()
+{
+    m_leftShooterMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.8); // Example: 80% power
+}
 
 void Shooter::SetSpeed(double speed)
 {
     m_leftShooterMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, speed);
-    m_rightShooterMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, speed);
+    // m_rightShooterMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, speed);
 }
-
-// double Shooter::getSpeed() {
-//     return m_ShooterMotor.GetVelocity().GetValue();    //TODO most likely delete this function, as it uses the velocity,
-// }                                                      //which we don't have access to due to the lack of encoders

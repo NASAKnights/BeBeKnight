@@ -6,6 +6,17 @@
 
 #include <frc2/command/CommandScheduler.h>
 
+/*
+motor id
+1 = intake
+2 = hopper
+3 = indexer
+4 = drive left
+5 = drive right
+6 = shooter1
+7 = shooter2
+ */
+
 Robot::Robot() {}
 
 /**
@@ -30,7 +41,7 @@ void Robot::DisabledInit()
 {
 
   // square for shooting
-  frc2::JoystickButton(&m_driverController, 1).WhileTrue(Shoot(&m_shooter).ToPtr());
+  // frc2::JoystickButton(&m_driverController, 1).WhileTrue(Shoot(&m_shooter).ToPtr());
 }
 
 void Robot::DisabledPeriodic() {}
@@ -83,7 +94,7 @@ void Robot::SimulationInit() {}
  */
 void Robot::SimulationPeriodic()
 {
-  m_shooter.SimulationPeriodic();
+  // m_shooter.SimulationPeriodic();
 }
 
 #ifndef RUNNING_FRC_TESTS

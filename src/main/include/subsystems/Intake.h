@@ -12,6 +12,11 @@ class Intake : public frc2::SubsystemBase
 public:
   Intake();
 
+  void intakeBall();
+  void outakeBall();
+  void stop();
+  void startHopper();
+
   /**
    * Will be called periodically whenever the CommandScheduler runs.
    */
