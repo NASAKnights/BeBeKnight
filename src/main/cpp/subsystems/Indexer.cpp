@@ -21,7 +21,7 @@ void Indexer::Periodic()
 
 bool Indexer::hasBall()
 {
-    return limitSwitch.Get();
+    return !limitSwitch.Get();
 }
 
 void Indexer::moveIndexer()
@@ -32,4 +32,9 @@ void Indexer::moveIndexer()
 void Indexer::stopIndexer()
 {
     m_indexerMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.0); // Stop the motor
+}
+
+void Indexer::PassiveIndex()
+{
+    m_indexerMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.1); // Set motor to 50% power
 }

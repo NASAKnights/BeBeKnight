@@ -19,11 +19,17 @@ public:
   /**
    * Called periodically whenever the CommandScheduler runs.
    */
+
+  
+
   void Periodic() override;
 
   /**
    * Moves the indexer mechanism.
    */
+
+  void PassiveIndex ();
+
   void moveIndexer();
 
   /**

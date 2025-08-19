@@ -21,7 +21,7 @@ void Intake::Periodic()
 
 void Intake::startHopper()
 {
-    m_hopperMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.2);
+    m_hopperMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.3);
 }
 
 void Intake::intakeBall()
