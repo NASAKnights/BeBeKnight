@@ -38,3 +38,13 @@ void Indexer::PassiveIndex()
 {
     m_indexerMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.1); // Set motor to 50% power
 }
+
+void Indexer::setLock(bool newLock)
+{
+    isLoaded = newLock;
+}
+
+bool Indexer::getLock()
+{
+    return isLoaded;    
+}

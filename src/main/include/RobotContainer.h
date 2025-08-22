@@ -19,6 +19,7 @@
 #include "subsystems/Indexer.h"
 #include "subsystems/Shooter.h"
 #include "subsystems/Intake.h"
+#include "commands/PassiveIndex.h"
 /**
  * This class is where the bulk of the robot should be declared.  Since
  * Command-based is a "declarative" paradigm, very little robot logic should

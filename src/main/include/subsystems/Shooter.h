@@ -28,10 +28,8 @@ namespace ShooterConstants
 {
   enum ShooterState
   {
-    Idle,
-    SpinningUp,
-    SpunUp,
-    SpinningDown
+    Loading,
+    Shooting
   };
 
   // static constexpr int ShooterMotor = 1;

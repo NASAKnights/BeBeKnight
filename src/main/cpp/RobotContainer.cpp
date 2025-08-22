@@ -35,6 +35,13 @@ void RobotContainer::ConfigureBindings()
   //               { return m_subsystem.ExampleCondition(); })
   //     .OnTrue(ExampleCommand(&m_subsystem).ToPtr());
 
+  m_indexer.SetDefaultCommand(frc2::RunCommand([this]
+  {
+    return PassiveIndex(&m_indexer);
+  }));
+
+  
+
   frc2::JoystickButton(&m_driverController, 1)
       .WhileTrue(Shoot(&m_shooter, &m_indexer).ToPtr());
 

@@ -32,6 +32,10 @@ public:
 
   void moveIndexer();
 
+  void setLock(bool newLock);
+  bool getLock();
+
+
   /**
    * Stops the indexer mechanism.
    */
@@ -47,4 +51,6 @@ private:
   frc::DigitalInput limitSwitch{0};
   ctre::phoenix::motorcontrol::can::VictorSPX m_indexerMotor{3}; // can ID 3, change as needed
   wpi::log::BooleanLogEntry m_BallLog;
+
+  bool isLoaded = false;
 };
