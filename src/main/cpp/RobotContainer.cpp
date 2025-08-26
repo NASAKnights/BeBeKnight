@@ -35,10 +35,7 @@ void RobotContainer::ConfigureBindings()
   //               { return m_subsystem.ExampleCondition(); })
   //     .OnTrue(ExampleCommand(&m_subsystem).ToPtr());
 
-  m_indexer.SetDefaultCommand(frc2::RunCommand([this]
-  {
-    return PassiveIndex(&m_indexer);
-  }));
+  m_indexer.SetDefaultCommand(PassiveIndex(&m_indexer));
 
   
 

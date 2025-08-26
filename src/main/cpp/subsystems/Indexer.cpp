@@ -26,7 +26,7 @@ bool Indexer::hasBall()
 
 void Indexer::moveIndexer()
 {
-    m_indexerMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.5); // Set motor to 50% power
+    m_indexerMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -0.35); // Set motor to 50% power
 }
 
 void Indexer::stopIndexer()
@@ -36,7 +36,7 @@ void Indexer::stopIndexer()
 
 void Indexer::PassiveIndex()
 {
-    m_indexerMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.1); // Set motor to 50% power
+    m_indexerMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -0.25); // Set motor to 50% power
 }
 
 void Indexer::setLock(bool newLock)

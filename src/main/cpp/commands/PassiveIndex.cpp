@@ -16,7 +16,13 @@ void PassiveIndex::Initialize() {}
 // Called repeatedly when this Command is scheduled to run
 void PassiveIndex::Execute() {
 
-  m_indexer->PassiveIndex();
+  if (m_indexer->hasBall())
+  {
+    m_indexer->stopIndexer();
+  } else {
+
+      m_indexer->PassiveIndex();
+  }
   
 }
 

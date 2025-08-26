@@ -40,5 +40,6 @@ public:
   Shooter *m_shooter;
   Indexer *m_indexer;
 
-  frc::Timer timer;
+  frc::Timer timer1;
+  frc::Timer timer2;
 };

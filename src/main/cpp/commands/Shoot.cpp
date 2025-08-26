@@ -15,22 +15,37 @@ Shoot::Shoot(Shooter *shooter, Indexer *indexer) : m_shooter{shooter},
 void Shoot::Initialize()
 {
   finished = false;
-  m_shooter->SetSpeed(-0.3);
-  timer.Start();
-  timer.Reset();
+  m_shooter->SetSpeed(-0.9);
+  timer1.Start();
+  timer1.Reset();
+  timer2.Start();
+  timer2.Reset();
 }
 
 // Called repeatedly when this Command is scheduled to run
 void Shoot::Execute()
 {
-  if (timer.HasElapsed(2_s) && m_indexer->hasBall())
+
+  if (timer1.HasElapsed(2_s) && m_indexer->hasBall())
   {
     m_indexer->moveIndexer();
     // finished = true;
-  }
-  else {
+  } 
+  else if(!m_indexer->hasBall())
+  {
+    timer1.Reset();
+    m_indexer->moveIndexer();
+  } 
+  else if(m_indexer->hasBall() && !timer1.HasElapsed(2_s)){
     m_indexer->stopIndexer();
+  } 
+  else
+  {
+    m_indexer->moveIndexer();
   }
+  // else {
+  //   m_indexer->stopIndexer();
+  // }
 }
 
 // Called once the command ends or is interrupted.
