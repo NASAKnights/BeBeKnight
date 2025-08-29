@@ -26,23 +26,56 @@ void Shoot::Initialize()
 void Shoot::Execute()
 {
 
-  if (timer1.HasElapsed(2_s) && m_indexer->hasBall())
+  // if (timer1.HasElapsed(2_s) && m_indexer->hasBall())
+  // {
+  //   m_indexer->moveIndexer(-0.5);
+  //   // finished = true;
+  // } 
+  // else if(!m_indexer->hasBall())
+  // {
+  //   timer1.Reset();
+  //   m_indexer->moveIndexer(-0.5);
+  // } 
+  // else if(m_indexer->hasBall() && !timer1.HasElapsed(2_s)){
+  //   m_indexer->stopIndexer();
+  // } 
+  // else
+  // {
+  //   m_indexer->moveIndexer(-0.5);
+  // }
+
+
+  switch (ShooterConstants::currentState)
   {
-    m_indexer->moveIndexer();
-    // finished = true;
-  } 
-  else if(!m_indexer->hasBall())
-  {
-    timer1.Reset();
-    m_indexer->moveIndexer();
-  } 
-  else if(m_indexer->hasBall() && !timer1.HasElapsed(2_s)){
-    m_indexer->stopIndexer();
-  } 
-  else
-  {
-    m_indexer->moveIndexer();
+    case ShooterConstants::ShooterState::Load:
+      m_indexer->PassiveIndex();
+      if (m_indexer->hasBall())
+      {
+        m_indexer->stopIndexer();
+        ShooterConstants::currentState = ShooterConstants::ShooterState::SpinUp;
+        timer1.Reset(); 
+      }
+    break;
+
+    case ShooterConstants::ShooterState::SpinUp:
+      if (timer1.HasElapsed(2_s))
+      {
+        ShooterConstants::currentState = ShooterConstants::ShooterState::Shooting;
+        timer1.Reset();
+      }
+    break;
+        
+    case ShooterConstants::ShooterState::Shooting:
+      m_indexer->moveIndexer(-0.5);
+      if (timer1.HasElapsed(0.25_s) && !m_indexer->hasBall())
+      {
+        ShooterConstants::currentState = ShooterConstants::ShooterState::Load;
+      }
+    break;
+    default:
+    break;
   }
+
   // else {
   //   m_indexer->stopIndexer();
   // }

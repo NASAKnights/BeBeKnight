@@ -30,7 +30,7 @@ public:
 
   void PassiveIndex ();
 
-  void moveIndexer();
+  void moveIndexer(double IndexerSpeed);
 
   void setLock(bool newLock);
   bool getLock();

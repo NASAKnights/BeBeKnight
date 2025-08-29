@@ -24,9 +24,9 @@ bool Indexer::hasBall()
     return !limitSwitch.Get();
 }
 
-void Indexer::moveIndexer()
+void Indexer::moveIndexer(double IndexerSpeed)
 {
-    m_indexerMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -0.35); // Set motor to 50% power
+    m_indexerMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, IndexerSpeed); // Set motor to 50% power
 }
 
 void Indexer::stopIndexer()

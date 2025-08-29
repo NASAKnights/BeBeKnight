@@ -28,9 +28,12 @@ namespace ShooterConstants
 {
   enum ShooterState
   {
-    Loading,
-    Shooting
+    Load,
+    SpinUp,
+    Shooting,
   };
+
+  static ShooterState currentState = ShooterConstants::ShooterState::Load;
 
   // static constexpr int ShooterMotor = 1;
   static constexpr int shooterMotorMain = 7;
@@ -54,6 +57,7 @@ namespace ShooterConstants
   const units::volt_t motorVoltage = units::volt_t{12.0};
 
 }
+
 class Shooter : public frc2::SubsystemBase
 {
 public:
